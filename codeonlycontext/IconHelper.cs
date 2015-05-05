@@ -52,10 +52,46 @@ namespace Etier.IconHelper
 		/// <param name="size">Large or small</param>
 		/// <param name="linkOverlay">Whether to include the link icon</param>
 		/// <returns>System.Drawing.Icon</returns>
-		public static System.Drawing.Icon GetFileIcon(string name, IconSize size, bool linkOverlay)
+
+
+
+        public static System.Drawing.Icon GetFolderIcon2(string name, IconSize size)
+        {
+            Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
+            uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
+
+         
+
+            /* Check the size specified for return. */
+            if (IconSize.Small == size)
+            {
+                flags += Shell32.SHGFI_SMALLICON;
+            }
+            else
+            {
+                flags += Shell32.SHGFI_LARGEICON;
+            }
+
+
+            Shell32.SHGetFileInfo(name,
+                Shell32.FILE_ATTRIBUTE_DIRECTORY,
+                ref shfi,
+                (uint)System.Runtime.InteropServices.Marshal.SizeOf(shfi),
+                flags);
+
+
+
+            // Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly
+            System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();
+            User32.DestroyIcon(shfi.hIcon);		// Cleanup
+            return icon;
+        }
+
+
+        public static System.Drawing.Icon GetFileIcon(string name, IconSize size, bool linkOverlay)
 		{
 			Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
-			uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
+			uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES     ;
 
 			if (true == linkOverlay) flags += Shell32.SHGFI_LINKOVERLAY;
 
@@ -69,11 +105,14 @@ namespace Etier.IconHelper
 				flags += Shell32.SHGFI_LARGEICON ;
 			}
 
-			Shell32.SHGetFileInfo(	name, 
-				Shell32.FILE_ATTRIBUTE_NORMAL, 
-				ref shfi, 
-				(uint) System.Runtime.InteropServices.Marshal.SizeOf(shfi), 
-				flags );
+         
+			    Shell32.SHGetFileInfo(	name, 
+				    Shell32.FILE_ATTRIBUTE_NORMAL, 
+				    ref shfi, 
+				    (uint) System.Runtime.InteropServices.Marshal.SizeOf(shfi), 
+				    flags );
+         
+         
 
 			// Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly
 			System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();

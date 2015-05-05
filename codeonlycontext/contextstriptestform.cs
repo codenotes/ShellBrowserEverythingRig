@@ -7,7 +7,8 @@ using EvMenu;
 using System.Drawing;
 using System.Data;
 using Etier.IconHelper;
-
+using System.Collections.Generic;
+using System.IO;
 
 namespace codeonlycontext
 {
@@ -34,7 +35,12 @@ namespace codeonlycontext
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //fileList1.Add("c:\\temp\\test.xml");
+        
+
+                
+                
+                
+                //fileList1.Add("c:\\temp\\test.xml");
             this.AcceptButton = button1;
 
             var ev = new EvMenu.EvCustomContextMenu();
@@ -48,7 +54,7 @@ namespace codeonlycontext
 
 
             textBox1.Focus();
-
+            
         
 
         }
@@ -94,6 +100,16 @@ namespace codeonlycontext
             }
         }
 
+
+        private void mouseclick(object sender, EventArgs e)
+        {
+
+            Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+            fileList1.Refresh();
+
+
+        }
         bool isDir(string s)
         {
 
@@ -148,10 +164,16 @@ namespace codeonlycontext
             
             fileList1.Clear();
             fileList1.BeginUpdate();
+
+            
+
+
+
            
             int i;
             const int bufsize = 260;
             StringBuilder buf = new StringBuilder(bufsize);
+            StringBuilder buf2 = new StringBuilder();
 
 
             // set the search
@@ -172,18 +194,37 @@ namespace codeonlycontext
 
             // set the window title
             Text = textBox1.Text + " - " + EverythingSearch.Everything_GetNumResults() + " Results";
-            
+
+            var results = EverythingSearch.Everything_GetNumResults();
+
+            string[] l = new string[results];
 
             // loop through the results, adding each result to the listbox.
-            for (i = 0; i < EverythingSearch.Everything_GetNumResults(); i++)
+            
+            for (i = 0; i < results; i++)
             {
                 // get the result's full path and file name.
                 EverythingSearch.Everything_GetResultFullPathNameW(i, buf, bufsize);
-                fileList1.Add(buf.ToString());
+            //    fileList1.Add(buf.ToString());
+
+                l[i] = buf.ToString();
+
+                //buf2.Append(buf);
+                //buf2.Append(";");
 
                 // add it to the list box				
          //       listBox1.Items.Insert(i, buf);
             }
+            
+            
+            fileList1.AddStrings(l);
+            //foreach (var s  in l)
+            //{
+
+            //    Console.WriteLine("{0}", s);
+            //}
+            
+
 
             fileList1.EndUpdate();
             textBox1.Focus();
@@ -207,6 +248,8 @@ namespace codeonlycontext
         private void fileList1_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
             Console.WriteLine("drawsubitem:{0}", e.SubItem.Text);
+
+
             
             if(e.ColumnIndex>0)
             using (System.Drawing.StringFormat sf = new System.Drawing.StringFormat())
@@ -229,61 +272,8 @@ namespace codeonlycontext
         //this gets called
 
         //from MSDN
-        private void fileList1_DrawItem3(object sender,
-    DrawListViewItemEventArgs e)
-        {
-            if ((e.State & ListViewItemStates.Selected) != 0)
-            {
-                // Draw the background and focus rectangle for a selected item.
-                e.Graphics.FillRectangle(Brushes.Maroon, e.Bounds);
-                e.DrawFocusRectangle();
-            }
-            else
-            {
-                // Draw the background for an unselected item. 
-                using (System.Drawing.Drawing2D.LinearGradientBrush brush =
-                    new System.Drawing.Drawing2D.LinearGradientBrush(e.Bounds, Color.Orange,
-                    Color.Maroon, System.Drawing.Drawing2D.LinearGradientMode.Horizontal))
-                {
-                    e.Graphics.FillRectangle(brush, e.Bounds);
-                }
-            }
+       
 
-            // Draw the item text for views other than the Details view. 
-            if (fileList1.View != View.Details)
-            {
-                e.DrawText();
-            }
-        }
-
-        static public int MeasureDisplayStringWidth2(Graphics graphics, string text,
-                                            Font font)
-                {
-                    const int width = 32;
-
-                    System.Drawing.Bitmap   bitmap = new System.Drawing.Bitmap (width, 1, 
-                        graphics);
-                    System.Drawing.SizeF    size   = graphics.MeasureString (text, font);
-                    System.Drawing.Graphics anagra = System.Drawing.Graphics.FromImage(bitmap);
-
-                    int measured_width = (int) size.Width;
-
-                    if (anagra != null)
-                    {
-                        anagra.Clear (Color.White);
-                        anagra.DrawString (text+"|", font, Brushes.Black,
-                                           width - measured_width, -font.Height / 2);
-
-                        for (int i = width-1; i >= 0; i--)
-                        {
-                            measured_width--;
-                            if (bitmap.GetPixel (i, 0).R != 255)    // found a non-white pixel ?
-                                break;
-                        }
-                    }
-
-                    return measured_width;
-                }
 
 
         static public int MeasureDisplayStringWidth(Graphics graphics, string text,
@@ -306,70 +296,34 @@ namespace codeonlycontext
             }
 
 
-        public void MeasureDisplayStringWidth3(Graphics g, Font stringFont, DrawListViewItemEventArgs e, string measureString)
+
+        private void whiteout(int x, int y, int width, int height, DrawListViewItemEventArgs e)
         {
-            //
-            // Get a more convenient graphics object.
-  //          Graphics g = e.Graphics;
+         //   SolidBrush white = new SolidBrush(fileList1.BackColor);
+            SolidBrush white = new SolidBrush(fileList1.BackColor);
+            var r2 = new Rectangle();
+            r2.X = x;
+            r2.Y = y;
+            r2.Height = height;
+            r2.Width = width;
+            e.Graphics.FillRectangle(white, r2);
 
-            // Set up string.
-          //  string measureString = "This is a test string, will be printed at random offsets!";
-            int numChars = measureString.Length;
 
-            //
-            // Set up the characted ranger array.
-            CharacterRange[] characterRanges = new CharacterRange[numChars];
-            for (int i = 0; i < numChars; i++)
-                characterRanges[i] = new CharacterRange(i, 1);
-
-            //
-            // Set up the string format
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.FormatFlags = StringFormatFlags.NoClip;			// Make sure the characters are not clipped
-            stringFormat.SetMeasurableCharacterRanges(characterRanges);
-
-            //
-            // Set up the array to accept the regions.
-            Region[] stringRegions = new Region[numChars];
-
-            //
-            // The font to use.. 'using' will dispose of it for us
-          //  using (Font stringFont = new Font("Times New Roman", 16.0F))
-            {
-
-                //
-                // Get the max width.. for the complete length
-                SizeF size = g.MeasureString(measureString, stringFont);
-
-                //
-                // Assume the string is in a stratight line, just to work out the 
-                // regions. We will adjust the containing rectangles later.
-                RectangleF layoutRect = new RectangleF(0.0f, 0.0f, size.Width, size.Height);
-
-                //
-                // Caluclate the regions for each character in the string.
-                stringRegions = e.Graphics.MeasureCharacterRanges(
-                    measureString,
-                    stringFont,
-                    layoutRect,
-                    stringFormat);
-
-                //
-                // Some random offsets, uncomment the DrawRectagle if you want to see the bounding box.
-                //Random rand = new Random();
-                //for (int indx = 0; indx < numChars; indx++)
-                //{
-                //    Region region = stringRegions[indx] as Region;
-                //    RectangleF rect = region.GetBounds(g);
-                //    rect.Offset(0f, (float)rand.Next(100) / 10f);
-                //    g.DrawString(measureString.Substring(indx, 1), stringFont, Brushes.Yellow, rect, stringFormat);
-                //    // g.DrawRectangle( Pens.Red, Rectangle.Round( rect ));
-                //}
-            }
         }
 
-  
+        private void redout(int x, int y, int width, int height, DrawListViewItemEventArgs e)
+        {
+            //   SolidBrush white = new SolidBrush(fileList1.BackColor);
+            SolidBrush white = new SolidBrush(System.Drawing.Color.Red);
+            var r2 = new Rectangle();
+            r2.X = x;
+            r2.Y = y;
+            r2.Height = height;
+            r2.Width = width;
+            e.Graphics.FillRectangle(white, r2);
 
+
+        }
 
 
         private void boldtest(Font f, string substr, DrawListViewItemEventArgs e)
@@ -377,12 +331,45 @@ namespace codeonlycontext
             
             var boldFont = new Font(f, FontStyle.Bold);
 
+
+          //  redout(e.Bounds.X,e.Bounds.Y,20, e.Bounds.Height,e);
+
+        //    var ii=Jam.Shell.SystemImageListHelper.GetIndexFromPath(e.Item.Text);
+
+      //      var ic= Jam.Shell.SystemImageListHelper.
+            
+            //var ic = Jam.Shell.SystemImageListHelper.GetFileIcon(e.Item.Text, Jam.Shell.SystemImageListSize.SmallIcons,false); //this causes ownerredraw to turn off.
+           
+            // get the file attributes for file or directory
+
+            Icon ic;
+       //     FileAttributes attr = File.GetAttributes(e.Item.Text);
+            
+            
+         //   Console.WriteLine(e.Item.Text);
+                //detect whether its a directory or file
+                //if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                //    ic = Etier.IconHelper.IconReader.GetFileIcon(e.Item.Text, IconReader.IconSize.Small,true); //doesnt' work for folders and certain non-system icons
+                //else
+                    ic = Etier.IconHelper.IconReader.GetFileIcon(e.Item.Text, IconReader.IconSize.Small,false); //doesnt' work for folders and certain non-system icons
+
+            
+            
+
+
+         //  
+          
+
+            e.Graphics.DrawIcon(ic, 0, e.Bounds.Top);//+ 20);
+      
+            
+
             var r = new Rectangle();
 
             r.X = e.Bounds.X + 20;
             r.Y = e.Bounds.Y;
 
-
+            
             //var location = new PointF(e.Bounds.Location.X, e.Bounds.Location.Y);
             var location = new PointF(r.X, r.Y);
 
@@ -393,6 +380,21 @@ namespace codeonlycontext
             //temp
            // substr = "one";
             //s = "onetwothree";
+
+
+            //first clear out whatever is already there
+         
+            SolidBrush white = new SolidBrush(fileList1.BackColor);
+            var r2 = new Rectangle();
+            r2.X = e.Bounds.X +20;
+            r2.Y = e.Bounds.Y;
+            r2.Height = e.Bounds.Height;
+            r2.Width = e.Bounds.Width;
+            e.Graphics.FillRectangle(white, r2);
+
+            //end clear
+
+      
 
             var loc = s.IndexOf(substr, StringComparison.CurrentCultureIgnoreCase);
             if (loc == -1) return;
@@ -424,20 +426,46 @@ namespace codeonlycontext
          //   location.X += size.Width;
             location.X += size.Width-4;
 
-            e.Graphics.DrawString(end,f, Brushes.Black, location);
+
+            SizeF size2 = e.Graphics.MeasureString(s, f);
+
+            
+
+            //kinda works. 
+            if (size2.Width > fileList1.Columns[0].Width)
+            {
+
+                fileList1.Columns[0].Width = (int)size2.Width + 50;
+
+            
+
+            }
+
+                e.Graphics.DrawString(end, f, Brushes.Black, location);
+
+
+
         }
 
-
+        //This is really for drawing just the first item.  subitems have their own callback. 
         private void fileList1_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
-
-            e.DrawDefault = false;
- 
-
+       //     var ic2 = Icon.ExtractAssociatedIcon(e.Item.Text); //this works!
+         
+            
+            //turn this back on at some point
+   //            e.DrawDefault = false;
+      
             
             Console.WriteLine("{0} drawitem", count++);
 
-            var ic = Etier.IconHelper.IconReader.GetFileIcon(e.Item.Text, IconReader.IconSize.Small, false);
+
+            System.Windows.Controls.ToolTip tooltip = new System.Windows.Controls.ToolTipToolTip();
+            tooltip.Placement =  System.Windows.Controlsk 
+            tooltip.PlacementRectangle = new  System.Windows.Controls.ToolTip.Rect(50, 0, 0, 0);
+            tooltip.HorizontalOffset = 10;
+            tooltip.VerticalOffset = 20;
+
 
             var r =new Rectangle();
 
@@ -447,7 +475,6 @@ namespace codeonlycontext
             var font = fileList1.Font;
 
 
-            e.Graphics.DrawIcon(ic, 0, e.Bounds.Top );//+ 20);
            // e.DrawDefault = true;
             using (System.Drawing.StringFormat sf = new System.Drawing.StringFormat())
             {
@@ -466,53 +493,7 @@ namespace codeonlycontext
             
         }
         
-        
-        private void fileList1_DrawItem2(object sender, DrawListViewItemEventArgs e)
-        {
 
-            var ic = Etier.IconHelper.IconReader.GetFileIcon(e.Item.Text, IconReader.IconSize.Small, false);
-
-            Console.WriteLine("{0} drawitem", count++);
-            //   e.DrawBackground();
-
-
-            e.DrawDefault = false;
-
-            Console.WriteLine("{1}\n{0}\n", e.Item.Text,count);
-            count++;
-
-         //   e.DrawBackground();
-
-             var clsBrush=  new System.Drawing.SolidBrush(fileList1.ForeColor);
-
-            //e.Graphics.DrawString(sPart1, ListView1.Font, clsBrush, e.Bounds.X, e.Bounds.Y);
-
-            //e.Graphics.DrawString(sPart2, New Font(ListView1.Font, FontStyle.Underline Or FontStyle.Bold), _
-            //            clsBrush, e.Bounds.X + e.Graphics.MeasureString(sPart1, ListView1.Font, _
-            //            New SizeF(e.Bounds.Width, e.Bounds.Height)).Width, e.Bounds.Y)
-
-            string s="booger!!!!!!!!!!!!!11";
-         
-           // e.Graphics.DrawIcon(ic, e.Bounds);
-
-           e.Graphics.DrawIcon(ic, 3, e.Bounds.Top + 20);
-           
-
-
-             //e.Graphics.DrawString(s, fileList1.Font, clsBrush, e.Bounds.X +
-             //            e.Graphics.MeasureString(s, fileList1.Font,
-             //            new System.Drawing.SizeF(e.Bounds.Width, e.Bounds.Height)).Width, e.Bounds.Y);
-
-           
-            
-            clsBrush.Dispose();
-            e.DrawFocusRectangle();
-        //      e.DrawBackground();
-        //' extract the 3 parts to the text...
-        //If e.Item.Text.Contains(m_sSearchString) Then
-            //Console.WriteLine("drawitem"); //this is the one
-
-        }
 
         private void fileList1_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {

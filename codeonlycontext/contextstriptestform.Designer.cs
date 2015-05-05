@@ -36,6 +36,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.fileList1)).BeginInit();
+            
             this.SuspendLayout();
             // 
             // fileList1
@@ -56,7 +57,7 @@
             this.fileList1.SearchOptions.RegexPattern = "";
             this.fileList1.ShowColorCompressed = System.Drawing.Color.Empty;
             this.fileList1.ShowColorEncrypted = System.Drawing.Color.Empty;
-            this.fileList1.Size = new System.Drawing.Size(452, 200);
+            this.fileList1.Size = new System.Drawing.Size(452, 147);
             this.fileList1.TabIndex = 1;
             this.fileList1.ThumbnailBorderColor = System.Drawing.Color.LightGray;
             this.fileList1.ThumbnailSize = new System.Drawing.Size(96, 96);
@@ -111,12 +112,14 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(120, 95);
             this.listBox1.TabIndex = 6;
+   
             // 
             // contextstriptestform
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(487, 394);
+            this.ClientSize = new System.Drawing.Size(634, 574);
+            
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -127,6 +130,7 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.fileList1)).EndInit();
+            
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -140,6 +144,8 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.ListBox listBox1;
+        
+        
     }
 }
 
