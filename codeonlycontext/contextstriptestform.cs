@@ -342,7 +342,7 @@ namespace codeonlycontext
            
             // get the file attributes for file or directory
 
-            Icon ic;
+   //         Icon ic;
        //     FileAttributes attr = File.GetAttributes(e.Item.Text);
             
             
@@ -351,17 +351,21 @@ namespace codeonlycontext
                 //if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                 //    ic = Etier.IconHelper.IconReader.GetFileIcon(e.Item.Text, IconReader.IconSize.Small,true); //doesnt' work for folders and certain non-system icons
                 //else
-                    ic = Etier.IconHelper.IconReader.GetFileIcon(e.Item.Text, IconReader.IconSize.Small,false); //doesnt' work for folders and certain non-system icons
+                  var  ic = Etier.IconHelper.IconReader.GetFileIcon(e.Item.Text, IconReader.IconSize.Small,false); //doesnt' work for folders and certain non-system icons
 
-            
-            
+
+                  
 
 
          //  
-          
+
+                   // var sysImages = new Jam.Shell.SystemImageListHelper();
+            //var ic2=    Jam.Shell.SystemImageListHelper.GetFileIcon(e.Item.Text, Jam.Shell.SystemImageListSize.SmallIcons, false);
+
 
             e.Graphics.DrawIcon(ic, 0, e.Bounds.Top);//+ 20);
       
+            
             
 
             var r = new Rectangle();
@@ -454,17 +458,17 @@ namespace codeonlycontext
          
             
             //turn this back on at some point
-   //            e.DrawDefault = false;
+               e.DrawDefault = false;
       
             
             Console.WriteLine("{0} drawitem", count++);
 
 
-            System.Windows.Controls.ToolTip tooltip = new System.Windows.Controls.ToolTipToolTip();
-            tooltip.Placement =  System.Windows.Controlsk 
-            tooltip.PlacementRectangle = new  System.Windows.Controls.ToolTip.Rect(50, 0, 0, 0);
-            tooltip.HorizontalOffset = 10;
-            tooltip.VerticalOffset = 20;
+            //System.Windows.Controls.ToolTip tooltip = new System.Windows.Controls.ToolTipToolTip();
+            //tooltip.Placement =  System.win
+            //tooltip.PlacementRectangle = new  System.Windows.Controls.ToolTip.Rect(50, 0, 0, 0);
+            //tooltip.HorizontalOffset = 10;
+            //tooltip.VerticalOffset = 20;
 
 
             var r =new Rectangle();

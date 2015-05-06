@@ -56,7 +56,8 @@ namespace WindowsFormsApplication4
         {
             var p = fileList1.SelectedItems;
 
-         
+            fileList21.Add("c:\\temp\\test.xml");
+
             foreach(var x in p)
             {
                 Console.WriteLine(x.ToString());
@@ -92,6 +93,11 @@ namespace WindowsFormsApplication4
         private void threeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Console.WriteLine("three");
+        }
+
+        private void fileList21_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
