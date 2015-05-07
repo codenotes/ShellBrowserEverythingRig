@@ -16,7 +16,6 @@ using System.Diagnostics;
 
 
 
-using System.Runtime.InteropServices;
 
 
 
@@ -24,7 +23,7 @@ using System.Runtime.InteropServices;
     {
         const int iconOffset = 20;
         public string SearchTerm;
-        List<Rectangle> CurrentDrawn =new List<Rectangle>();
+        Dictionary<int, Rectangle> CurrentlyDrawn =new Dictionary<int, Rectangle>();
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
@@ -154,6 +153,8 @@ using System.Runtime.InteropServices;
 
                         if (cnt == 0) return;
                         Color customColor = Color.FromArgb(50, Color.Blue);
+                   //     Console.WriteLine("Custom color is:{0}", customColor);
+
                         var brush =new SolidBrush( customColor);
                         Jam.Shell.FileListItem s=null;
 
@@ -190,11 +191,25 @@ using System.Runtime.InteropServices;
 //                            System.Drawing.SolidBrush brush(System.Drawing.Color(127 /*A*/, 0 /*R*/, 0 /*G*/, 255 /*B*/));
   //                          g.FillRectangle (&brush, 0, 0, width, height);
 
-                            graphics.DrawRectangle(System.Drawing.Pens.Red, r);
-//                            var p =new  Point(r.X, r.Y);
-  //                          Console.WriteLine("Color:{0}",GetColorAt(p));
+                            
+                            
+                            
+                           // var p =new  Point((int)(r.Width*.5), (int)(r.Height*.5));
+                           //Color c= GetColorAt(p);
+                           // Console.WriteLine("{0}",GetColorAt(p));
 
-                           // graphics.FillRectangle( brush,r );
+
+                            if (!CurrentlyDrawn.ContainsKey(i))
+                            {
+                                Console.WriteLine("Paint:{0}", s.Path);
+                                graphics.DrawRectangle(System.Drawing.Pens.Red, r);
+                                graphics.FillRectangle(brush, r);
+                                CurrentlyDrawn[i] = r;
+                            }
+                            else
+                            {
+                                Console.WriteLine("!Paint:{0}", s.Path);
+                            }
 
 
                          //   Console.WriteLine("{0}:{1}", f, ms);
