@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Everything.cs" />
     <Compile Include="FileList2.cs">
       <SubType>Component</SubType>
     </Compile>

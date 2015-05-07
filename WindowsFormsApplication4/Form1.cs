@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Everything;
 
 namespace WindowsFormsApplication4
 {
@@ -42,11 +43,7 @@ namespace WindowsFormsApplication4
          
         }
 
-        private void fuck(object sender, EventArgs e)
-        {
-            Console.WriteLine("fyj");
-        }
-
+ 
         private void fileList1_SelectedIndexChanged(object sender, EventArgs e)
         {
           
@@ -54,16 +51,74 @@ namespace WindowsFormsApplication4
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var p = fileList1.SelectedItems;
 
-            fileList21.Add("c:\\temp\\test.xml");
 
-            foreach(var x in p)
+            fileList21.Clear();
+
+            int i;
+            const int bufsize = 260;
+            StringBuilder buf = new StringBuilder(bufsize);
+            StringBuilder buf2 = new StringBuilder();
+
+
+            // set the search
+            EverythingSearch.Everything_SetSearchW(textBox1.Text);
+
+            fileList21.SearchTerm = textBox1.Text;
+
+
+            // use our own custom scrollbar... 			
+            // Everything_SetMax(listBox1.ClientRectangle.Height / listBox1.ItemHeight);
+            // Everything_SetOffset(VerticalScrollBarPosition...);
+
+            // execute the query
+            EverythingSearch.Everything_QueryW(true);
+
+
+            Text = textBox1.Text + " - " + EverythingSearch.Everything_GetNumResults() + " Results";
+
+            var results = EverythingSearch.Everything_GetNumResults();
+
+            string[] l = new string[results];
+
+            // loop through the results, adding each result to the listbox.
+
+            for (i = 0; i < results; i++)
             {
-                Console.WriteLine(x.ToString());
+                // get the result's full path and file name.
+                EverythingSearch.Everything_GetResultFullPathNameW(i, buf, bufsize);
+                //    fileList1.Add(buf.ToString());
 
+                l[i] = buf.ToString();
+
+                //buf2.Append(buf);
+                //buf2.Append(";");
+
+                // add it to the list box				
+                //       listBox1.Items.Insert(i, buf);
             }
 
+
+            fileList21.AddStrings(l);
+
+           
+
+
+
+
+
+
+            //var p = fileList1.SelectedItems;
+
+            //fileList21.Add("c:\\temp\\test.xml");
+
+            //foreach(var x in p)
+            //{
+            //    Console.WriteLine(x.ToString());
+
+            //}
+
+            //fileList21.getVisible();
 
         }
 

@@ -36,6 +36,7 @@
             this.oneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.twoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.threeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.fileList21 = new FileList2();
             ((System.ComponentModel.ISupportInitialize)(this.fileList1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -114,6 +115,14 @@
             this.threeToolStripMenuItem.Text = "three";
             this.threeToolStripMenuItem.Click += new System.EventHandler(this.threeToolStripMenuItem_Click);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(70, 278);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(166, 20);
+            this.textBox1.TabIndex = 3;
+            this.textBox1.Text = "tstt";
+            // 
             // fileList21
             // 
             this.fileList21.AutoSizeColumn = -1;
@@ -132,7 +141,7 @@
             this.fileList21.SearchOptions.RegexPattern = "";
             this.fileList21.ShowColorCompressed = System.Drawing.Color.Empty;
             this.fileList21.ShowColorEncrypted = System.Drawing.Color.Empty;
-            this.fileList21.Size = new System.Drawing.Size(426, 366);
+            this.fileList21.Size = new System.Drawing.Size(426, 251);
             this.fileList21.TabIndex = 2;
             this.fileList21.ThumbnailBorderColor = System.Drawing.Color.LightGray;
             this.fileList21.ThumbnailSize = new System.Drawing.Size(96, 96);
@@ -144,6 +153,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(797, 489);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.fileList21);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.fileList1);
@@ -154,6 +164,7 @@
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fileList21)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -167,6 +178,7 @@
         private System.Windows.Forms.ToolStripMenuItem twoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem threeToolStripMenuItem;
         private FileList2 fileList21;
+        private System.Windows.Forms.TextBox textBox1;
 
     }
 }
