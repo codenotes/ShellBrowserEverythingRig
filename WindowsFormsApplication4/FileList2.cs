@@ -23,7 +23,7 @@ using System.Diagnostics;
     {
         const int iconOffset = 20;
         public string SearchTerm;
-        Dictionary<int, Rectangle> CurrentlyDrawn =new Dictionary<int, Rectangle>();
+        private bool bInvalidate = false;
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
@@ -120,6 +120,16 @@ using System.Diagnostics;
             return screenPixel.GetPixel(0, 0);
         }
 
+        public void DumpColor(int x, int y)
+        {
+
+            var p = new Point(x, y);
+            Color c = GetColorAt(p);
+            Console.WriteLine("Color:{0}", GetColorAt(p));
+
+
+        }
+
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
@@ -180,7 +190,7 @@ using System.Diagnostics;
                             r.X += r2.X + iconOffset;
                             r.Width = r2.Width;
 
-
+                            
                             //r.X += iconOffset;
                             //r.Width = ms;
 
@@ -199,16 +209,52 @@ using System.Diagnostics;
                            // Console.WriteLine("{0}",GetColorAt(p));
 
 
-                            if (!CurrentlyDrawn.ContainsKey(i))
+                     //       if (!CurrentlyDrawn2.ContainsKey(r.ToString()))
+                           // if(!CurrentlyDrawn2.ContainsKey(r.ToString()))
+                            //{
+                     
+
+                            //if (CurrentlyDrawn2.ContainsKey(r.ToString()))
+                            //    CurrentlyDrawn2[r.ToString()] = CurrentlyDrawn2[r.ToString()] + 1;
+                            //else
+                            //{ 
+                            //    CurrentlyDrawn2[r.ToString()] = 1;
+                            //if (!bInvalidate)
+                            //{
+                            //    Invalidate(r, false);
+                            //    bInvalidate = true;
+                            //}
+                            //else
+                            //    bInvalidate = false;
+
+
+                            Bitmap bmp = new Bitmap(r.Width, r.Height, PixelFormat.Format32bppArgb);
+                            Graphics g = Graphics.FromImage(bmp);
+                            
+                            var p=new Point(r.Left,r.Top);
+
+                            p= PointToScreen(p);
+                            g.CopyFromScreen(p.X, p.Y, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
+                            Color c = bmp.GetPixel((int)(r.Width * .5), (int)(r.Height * .5));
+                            Console.WriteLine("Color:{0}", c);
+
+
+                            graphics.DrawRectangle(System.Drawing.Pens.Red, r);
+                            graphics.FillRectangle(brush, r);
+
+
+                            
+                           
+
+                          //  Console.WriteLine("Paint:{0} {1}", r.ToString(), CurrentlyDrawn2[r.ToString()]);
+
+                           
+                            
+                            
+                            //}
+                            //else
                             {
-                                Console.WriteLine("Paint:{0}", s.Path);
-                                graphics.DrawRectangle(System.Drawing.Pens.Red, r);
-                                graphics.FillRectangle(brush, r);
-                                CurrentlyDrawn[i] = r;
-                            }
-                            else
-                            {
-                                Console.WriteLine("!Paint:{0}", s.Path);
+                              //  Console.WriteLine("!Paint:{0}", s.Path);
                             }
 
 

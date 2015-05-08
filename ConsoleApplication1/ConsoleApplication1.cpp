@@ -8,7 +8,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 
 
-WM_HSCROLL
+//WM_HSCROLL
 
 	return 0;
 }

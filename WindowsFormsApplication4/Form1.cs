@@ -154,5 +154,11 @@ namespace WindowsFormsApplication4
         {
 
         }
+
+        private void fileList21_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            fileList21.DumpColor(e.X, e.Y);
+
+        }
     }
 }
