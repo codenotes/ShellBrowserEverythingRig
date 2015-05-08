@@ -158,6 +158,7 @@
             this.fileList21.ThumbnailSize = new System.Drawing.Size(96, 96);
             this.fileList21.UseCompatibleStateImageBehavior = false;
             this.fileList21.SelectedIndexChanged += new System.EventHandler(this.fileList21_SelectedIndexChanged);
+            this.fileList21.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.fileList21_MouseDoubleClick);
             // 
             // Form1
             // 
