@@ -27,6 +27,15 @@ namespace Everything
         const int EVERYTHING_ERROR_INVALIDINDEX = 6;
         const int EVERYTHING_ERROR_INVALIDCALL = 7;
 
+
+        [DllImport("Everything32.dll")]
+		public static extern void Everything_SetReplyWindow(IntPtr hWnd);
+        [DllImport("Everything32.dll")]
+        public static extern void Everything_SetReplyID(int nId);
+
+        [DllImport("Everything32.dll")]
+        public static extern bool Everything_IsQueryReply(int message, IntPtr wParam, IntPtr lParam, uint nId);
+
         [DllImport(dllname, CharSet = CharSet.Unicode)]
         public static extern int Everything_SetSearchW(string lpSearchString);
         [DllImport("Everything32.dll")]

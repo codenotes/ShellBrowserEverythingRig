@@ -37,6 +37,7 @@
             this.twoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.threeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.fileList21 = new FileList2();
             ((System.ComponentModel.ISupportInitialize)(this.fileList1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -70,7 +71,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(108, 227);
+            this.button1.Location = new System.Drawing.Point(218, 228);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -123,12 +124,22 @@
             this.textBox1.TabIndex = 3;
             this.textBox1.Text = "tstt";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(70, 228);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "search";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // fileList21
             // 
             this.fileList21.AutoSizeColumn = -1;
             this.fileList21.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.fileList21.IsDropTarget = false;
-            this.fileList21.Location = new System.Drawing.Point(327, 48);
+            this.fileList21.Location = new System.Drawing.Point(316, 12);
             this.fileList21.Name = "fileList21";
             this.fileList21.SearchOptions.AccessInterval = null;
             this.fileList21.SearchOptions.CreationInterval = null;
@@ -141,7 +152,7 @@
             this.fileList21.SearchOptions.RegexPattern = "";
             this.fileList21.ShowColorCompressed = System.Drawing.Color.Empty;
             this.fileList21.ShowColorEncrypted = System.Drawing.Color.Empty;
-            this.fileList21.Size = new System.Drawing.Size(426, 251);
+            this.fileList21.Size = new System.Drawing.Size(426, 439);
             this.fileList21.TabIndex = 2;
             this.fileList21.ThumbnailBorderColor = System.Drawing.Color.LightGray;
             this.fileList21.ThumbnailSize = new System.Drawing.Size(96, 96);
@@ -153,6 +164,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(797, 490);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.fileList21);
             this.Controls.Add(this.button1);
@@ -160,6 +172,7 @@
             this.Name = "Form1";
             this.Text = "il";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Shown += new System.EventHandler(this.Form1_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.fileList1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fileList21)).EndInit();
@@ -179,6 +192,7 @@
         private System.Windows.Forms.ToolStripMenuItem threeToolStripMenuItem;
         private FileList2 fileList21;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button2;
 
     }
 }

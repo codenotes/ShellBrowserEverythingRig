@@ -35,6 +35,13 @@ namespace WindowsFormsApplication4
             fileList1.Add("c:\\temp\\test2.xml");
 
 
+            this.AcceptButton = button2;
+            
+
+            textBox1.SelectAll();
+            textBox1.Focus();
+
+
        //     fileList1.CheckBoxes = true;
                     
 
@@ -153,6 +160,21 @@ namespace WindowsFormsApplication4
         private void fileList21_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            fileList21.SearchEverything(textBox1.Text,false);
+            textBox1.SelectAll();
+            textBox1.Focus();
+
+
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            textBox1.SelectAll();
+            textBox1.Focus();
         }
     }
 }

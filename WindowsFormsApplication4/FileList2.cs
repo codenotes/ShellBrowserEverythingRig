@@ -6,24 +6,106 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
-
-using System;
-
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-
 using System.Diagnostics;
-
-
+using Everything;
+using EvMenu;
 
 
 
 
     class FileList2: Jam.Shell.FileList
     {
+        const int MARKER_COLOR = 0xFEFFFC; //was 0xEEBC1A
+
         const int iconOffset = 20;
         public string SearchTerm;
-        Dictionary<int, Rectangle> CurrentlyDrawn =new Dictionary<int, Rectangle>();
+        public int NumResults = 0;
+        private const int MY_REPLY_ID = 66;
+
+         public bool MatchPath
+            {
+                get 
+                    {
+   
+                        return Everything.EverythingSearch.Everything_GetMatchPath();
+                    }
+                set
+                     {
+
+                        Everything.EverythingSearch.Everything_SetMatchPath(value);
+                     }
+            }
+        
+        public bool MatchCase
+         {
+             get
+             { 
+                 return Everything.EverythingSearch.Everything_GetMatchCase(); 
+             }
+             set 
+             {
+
+                 Everything.EverythingSearch.Everything_SetMatchCase(value);
+             }
+         }
+
+        public bool MatchWholeWord
+        {
+            get 
+            {
+                return Everything.EverythingSearch.Everything_GetMatchWholeWord(); 
+            }
+            set
+            {
+                Everything.EverythingSearch.Everything_SetMatchWholeWord(value);
+            }
+        }
+
+        public int MaxResults
+        {
+            get 
+            {
+                return (int)Everything.EverythingSearch.Everything_GetMax();
+            }
+            set
+            {
+                Everything.EverythingSearch.Everything_SetMax(value); 
+            }
+        }
+
+        public int Offset
+        {
+            get
+            {
+                return (int)Everything.EverythingSearch.Everything_GetOffset();
+            }
+            set
+            {
+                Everything.EverythingSearch.Everything_SetOffset(value);
+            }
+        }
+
+
+
+        public bool RegEx
+        {
+            get 
+            {
+                return Everything.EverythingSearch.Everything_GetRegex() ; 
+            }
+            set 
+            {
+                Everything.EverythingSearch.Everything_SetRegex(value);
+     
+            }
+
+        }
+
+
+
+      //  Dictionary<int, Rectangle> CurrentlyDrawn =new Dictionary<int, Rectangle>();
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
@@ -31,6 +113,136 @@ using System.Diagnostics;
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true, ExactSpelling = true)]
         public static extern int BitBlt(IntPtr hDC, int x, int y, int nWidth, int nHeight, IntPtr hSrcDC, int xSrc, int ySrc, int dwRop);
 
+        [DllImport("gdi32.dll")]
+        static extern int GetPixel(IntPtr hDC, int x, int y);
+        [DllImport("gdi32.dll")]
+        static extern int SetPixel(IntPtr hDC, int x, int y, int color);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetDC(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        private System.Windows.Forms.ToolStripMenuItem oneToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem twoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem threeToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+
+        private EvCustomContextMenu ev=new EvCustomContextMenu();
+
+        public void Init()
+        {
+            contextMenuStrip1 = new ContextMenuStrip();
+            oneToolStripMenuItem = new ToolStripMenuItem();
+            twoToolStripMenuItem = new ToolStripMenuItem();
+            threeToolStripMenuItem = new ToolStripMenuItem();
+            
+            //ev.InitMenu();
+
+            this.ContextMenuStrip = ev.contextMenuStrip1;
+            ev.SetHandler(0, new EvMenu.MenuStripCallback(CopyClipboard));
+            ev.SetHandler(1, new EvMenu.MenuStripCallback(OpenPath));
+
+     
+           
+
+        }
+
+        public FileList2(): base()
+        {
+            Init();
+            Console.WriteLine("Constructor for FileList2");
+
+        
+
+            
+
+        }
+        
+        public void CopyClipboard(object data)
+        {
+           
+            var f = this.SelectedItems;
+            string s = "";
+
+            foreach(Jam.Shell.FileListItem x in f)
+            {
+                s = s + x.Path+";";
+            }
+
+            s=s.Substring(0, s.Length - 1);
+            Clipboard.SetText(s);
+
+        }
+
+        //used by delegate
+        public void OpenPath(object data)
+        {
+
+            var d = System.IO.Path.GetDirectoryName(this.SelectedItems[0].Path);
+            EvMenu.EvCustomContextMenu.ShellExecute(IntPtr.Zero, "open", "explorer.exe", d, "", EvMenu.EvCustomContextMenu.ShowCommands.SW_NORMAL);
+
+        }
+
+        private void PopulateResults()
+        {
+            int i;
+            const int bufsize = 260;
+            StringBuilder buf = new StringBuilder(bufsize);
+            StringBuilder buf2 = new StringBuilder();
+
+            NumResults = EverythingSearch.Everything_GetNumResults();
+
+            string[] l = new string[NumResults];
+
+            // loop through the results, adding each result to the listbox.
+
+            for (i = 0; i < NumResults; i++)
+            {
+                // get the result's full path and file name.
+                EverythingSearch.Everything_GetResultFullPathNameW(i, buf, bufsize);
+
+                l[i] = buf.ToString();
+
+            }
+
+            this.AddStrings(l);
+
+        }
+
+
+        public void SearchEverything(string search, bool blocking=true)
+        {
+            this.Clear();
+
+
+
+            // set the search
+            EverythingSearch.Everything_SetSearchW(search);
+
+            this.SearchTerm = search;
+
+            // execute the query
+            if (blocking)
+            {
+                EverythingSearch.Everything_QueryW(true);
+                PopulateResults();
+            }
+            else
+            {
+                Everything.EverythingSearch.Everything_SetReplyWindow(this.Handle);
+
+                //// set the reply id.
+                Everything.EverythingSearch.Everything_SetReplyID(MY_REPLY_ID);
+			
+                EverythingSearch.Everything_QueryW(false);
+            }
+
+         
+
+
+
+        }
 
         static public int MeasureDisplayStringWidth(Graphics graphics, string text,
                                     Font font)
@@ -102,31 +314,26 @@ using System.Diagnostics;
 
 
         }
-        static Bitmap screenPixel = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
-        public static Color GetColorAt(Point location)
-        {
-            
-            using (Graphics gdest = Graphics.FromImage(screenPixel))
-            {
-                using (Graphics gsrc = Graphics.FromHwnd(IntPtr.Zero))
-                {
-                    IntPtr hSrcDC = gsrc.GetHdc();
-                    IntPtr hDC = gdest.GetHdc();
-                    int retval = BitBlt(hDC, 0, 0, 1, 1, hSrcDC, location.X, location.Y, (int)CopyPixelOperation.SourceCopy);
-                    gdest.ReleaseHdc();
-                    gsrc.ReleaseHdc();
-                }
-            }
-            return screenPixel.GetPixel(0, 0);
-        }
+
 
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
 
 
+            if (Everything.EverythingSearch.Everything_IsQueryReply(m.Msg, m.WParam, m.LParam, MY_REPLY_ID))
+            {
+                PopulateResults();
+
+            }
+
+
+
             switch (m.Msg)
             {
+
+
+
                 case 0x000F: //paint
                     {
 
@@ -159,8 +366,10 @@ using System.Diagnostics;
                         Jam.Shell.FileListItem s=null;
 
 
-                        for (int i = startCount; (i- startCount) < cnt; i++ )
+                        for (int i = startCount; (i- startCount) <cnt; i++ )
                         {
+
+                           // if ((i - startCount == cnt) && itemCnt < cnt) continue;
 
                             try
                             {
@@ -181,35 +390,40 @@ using System.Diagnostics;
                             r.Width = r2.Width;
 
 
-                            //r.X += iconOffset;
-                            //r.Width = ms;
-
-                  //          this.getVisible();
-
-
-//                            Graphics g (hdc);
-//                            System.Drawing.SolidBrush brush(System.Drawing.Color(127 /*A*/, 0 /*R*/, 0 /*G*/, 255 /*B*/));
-  //                          g.FillRectangle (&brush, 0, 0, width, height);
-
                             
                             
                             
-                           // var p =new  Point((int)(r.Width*.5), (int)(r.Height*.5));
-                           //Color c= GetColorAt(p);
-                           // Console.WriteLine("{0}",GetColorAt(p));
+                           //alpha channels keep adding and get darker with multiple repaints
+                            //so I set a hidden stegenographic pixel to encode information.
+                            IntPtr dc = GetDC(this.Handle);
+                            int col=GetPixel(dc, r.X - 1, r.Y);
 
-
-                            if (!CurrentlyDrawn.ContainsKey(i))
+                            if (col != MARKER_COLOR)
                             {
-                                Console.WriteLine("Paint:{0}", s.Path);
-                                graphics.DrawRectangle(System.Drawing.Pens.Red, r);
-                                graphics.FillRectangle(brush, r);
-                                CurrentlyDrawn[i] = r;
+                          //      graphics.DrawRectangle(System.Drawing.Pens.Red, r);
+
+                                var cw = this.Columns[0].Width;
+
+                                if( ! (r.X + r.Width >cw) ) //do not draw beyond the column width
+                                    graphics.FillRectangle(brush, r);
+
+                                SetPixel(dc, r.X - 1, r.Y, MARKER_COLOR);
                             }
-                            else
-                            {
-                                Console.WriteLine("!Paint:{0}", s.Path);
-                            }
+
+                            ReleaseDC(this.Handle, dc);
+
+
+                            //if (!CurrentlyDrawn.ContainsKey(i))
+                            //{
+                            //    Console.WriteLine("Paint:{0}", s.Path);
+                            //    graphics.DrawRectangle(System.Drawing.Pens.Red, r);
+                            //    graphics.FillRectangle(brush, r);
+                            //    CurrentlyDrawn[i] = r;
+                            //}
+                            //else
+                            //{
+                            //    Console.WriteLine("!Paint:{0}", s.Path);
+                            //}
 
 
                          //   Console.WriteLine("{0}:{1}", f, ms);

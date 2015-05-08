@@ -9,6 +9,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 WM_HSCROLL
+WM_COPYDATA
 
 	return 0;
 }
